@@ -2,7 +2,7 @@
 import React from 'react';
 //import base64 from 'react-native-base64';
 import { Buffer } from 'buffer';
-
+import Tts from 'react-native-tts';
 const API_URL = 'https://westcentralus.api.cognitive.microsoft.com/face/v1.0/detect?returnFaceAttributes=emotion';
 const API_KEY = '172668a7e96a495ab1f38ca5c57bceb4';
 
@@ -27,9 +27,13 @@ import { RNCamera } from 'react-native-camera';
 const logo = require('./ios/logo.png');
 
 export default class App extends React.Component {
-    state = { isPermitted: false, res: {}, showIntroText: true, tookPic: false };
+    state = { isPermitted: false, res: {}, showIntroText: true, tookPic: false, maxEmotion: '', maxEmotionNumber: 0};
   constructor(props) {
     super(props);
+      Tts.addEventListener("tts-start", event =>      this.setState({ ttsStatus: "started" })    );
+      Tts.addEventListener("tts-finish", event =>      this.setState({ ttsStatus: "finished" })    );
+      Tts.addEventListener("tts-cancel", event =>      this.setState({ ttsStatus: "cancelled" })    );
+      Tts.setIgnoreSilentSwitch("ignore");
   }
   onPress() {
     var that = this;
@@ -136,22 +140,39 @@ export default class App extends React.Component {
           this.setState( { tookPic: true });
           console.log(this.state.tookPic);
           console.log(result && result[0] && result[0].faceAttributes.emotion);
+          
+          
+          Object.keys(result[0].faceAttributes.emotion).forEach((key) =>
+            {
+            if (this.state && (result[0].faceAttributes.emotion[key] > this.state.maxEmotionNumber)) {
+                                                                this.setState({maxEmotion: key });
+                                                                this.setState({maxEmotionNumber : result[0].faceAttributes.emotion[key]});
+                            }
+            });
       } catch(ex){
           console.error(ex);
           Alert.alert(event.type, ex.message);
       }
       
+      Tts.getInitStatus().then(() => {
+        Tts.speak('The most likely emotion they are feeling is:' + this.state.maxEmotion);
+      });
+      Tts.stop();
+            
+      
   }
     
+      
   render() {
     if (this.state.tookPic) {
         return (
                 <View style={styles.container}>
               <View style={{height: 50, width: '100%', flexDirection: 'row'}}>
-                <Button style={styles.homeButton} onPress={() => this.setState({tookPic: false, isPermitted: false})} title='Home'/>
+                <Button style={styles.homeButton} onPress={() => this.setState({tookPic: false, isPermitted: false, maxEmotion: '', maxEmotionNumber: 0})} title='Home'/>
               </View>
               
               <View style={{width: '100%', alignItems: 'center' }}>
+                <Text style={styles.large}>The most likely emotion they are feeling is: {this.state.maxEmotion}.</Text>
                   <Text style={styles.temp}>Anger: {this.state.res.anger}</Text>
                   <Text style={styles.temp}>Contempt: {this.state.res.contempt}</Text>
                   <Text style={styles.temp}>Disgust: {this.state.res.disgust}</Text>
@@ -268,6 +289,10 @@ const styles = StyleSheet.create({
   homeButton: {
     color: 'red',
   },
+                                 large: {
+                                   fontSize: 30,
+                                   color: 'grey',
+                                 },
   snapButton: {
     fontSize: 50,
     borderRadius: 30,

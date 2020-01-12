@@ -232,6 +232,8 @@ PODS:
     - React
   - RNVectorIcons (6.6.0):
     - React
+  - TextToSpeech (2.0.0):
+    - React
   - Yoga (1.14.0)
 
 DEPENDENCIES:
@@ -267,6 +269,7 @@ DEPENDENCIES:
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - RNFS (from `../node_modules/react-native-fs`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
+  - TextToSpeech (from `../node_modules/react-native-tts`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -331,6 +334,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-fs"
   RNVectorIcons:
     :path: "../node_modules/react-native-vector-icons"
+  TextToSpeech:
+    :path: "../node_modules/react-native-tts"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -365,8 +370,9 @@ SPEC CHECKSUMS:
   ReactCommon: 198c7c8d3591f975e5431bec1b0b3b581aa1c5dd
   RNFS: 0d4191b1052bef9ce70deff00a5b4169c62bbd9b
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
+  TextToSpeech: 4e2fc50c7495416c6da5a1662ad3f750c58d3c85
   Yoga: f2a7cd4280bfe2cca5a7aed98ba0eb3d1310f18b
 
-PODFILE CHECKSUM: 0424cc65c7acc5742a408a6e57c14307208104b5
+PODFILE CHECKSUM: f3b252d0fa6e76e33943dcd190e983ddcff1ce72
 
 COCOAPODS: 1.8.4
