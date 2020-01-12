@@ -46,13 +46,3 @@ target 'EmotionsDecoded' do
 
   use_native_modules!
 end
-
-target 'EmotionsDecoded-tvOS' do
-  # Pods for EmotionsDecoded-tvOS
-
-  target 'EmotionsDecoded-tvOSTests' do
-    inherit! :search_paths
-    # Pods for testing
-  end
-
-end
