@@ -4,7 +4,7 @@ import React from 'react';
 import { Buffer } from 'buffer';
 import Tts from 'react-native-tts';
 const API_URL = 'https://westcentralus.api.cognitive.microsoft.com/face/v1.0/detect?returnFaceAttributes=emotion';
-const API_KEY = '172668a7e96a495ab1f38ca5c57bceb4';
+const API_KEY = '';
 
 //import react in our code.
 import {
@@ -166,10 +166,13 @@ export default class App extends React.Component {
   render() {
     if (this.state.tookPic) {
         return (
-                <View style={styles.container}>
+            <View style={styles.container}>
               <View style={{height: 50, width: '100%', flexDirection: 'row'}}>
-                <Button style={styles.homeButton} onPress={() => this.setState({tookPic: false, isPermitted: false, maxEmotion: '', maxEmotionNumber: 0})} title='Home'/>
-              </View>
+                <Button
+                    style={styles.homeButton}
+                    onPress={() => this.setState({tookPic: false, isPermitted: false, maxEmotion: '', maxEmotionNumber: 0})}
+                    title='Home'/>
+                </View>
               
               <View style={{width: '100%', alignItems: 'center' }}>
                 <Text style={styles.large}>The most likely emotion they are feeling is: {this.state.maxEmotion}.</Text>
