@@ -11,14 +11,16 @@ import {
   Platform,
   TouchableOpacity,
   Image,
+  Button,
 } from 'react-native';
+import { Icon } from 'react-native-elements';
 //import all the basic components we are going to use.
 import { CameraKitCameraScreen } from 'react-native-camera-kit';
 //import CameraKitCameraScreen we are going to use.
 import { logo } from './ios/logo.png';
- 
+
 export default class App extends React.Component {
-  state = { isPermitted: false };
+  state = { isPermitted: false, showIntroText: true };
   constructor(props) {
     super(props);
   }
@@ -129,14 +131,18 @@ export default class App extends React.Component {
     } else {
       return (
         <View style={styles.container}>
-          <Text style={styles.text2}>Welcome to Emotions Decoded!</Text>
-          <Image style={{width: 250, height: 250, backgroundColor: 'red'}} source={ logo } />
-
-          <TouchableOpacity
+          {this.state.showIntroText && <Text style={styles.text2}>Welcome to Emotions Decoded!</Text>}
+          {this.state.showIntroText && <Icon name='help' /> }
+          {this.state.showIntroText && <Button style={styles.infoText} onPress={() => this.setState({showIntroText: !this.state.showIntroText})} title='Learn more about the app'/> }
+          {this.state.showIntroText && <Image style={{width: 250, height: 250, backgroundColor: 'red'}} source={ logo } /> }
+          {this.state.showIntroText && <TouchableOpacity
             style={styles.button}
             onPress={this.onPress.bind(this)}>
             <Text style={styles.text}>Capture Face</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> }
+          {!this.state.showIntroText && <Icon name='close' /> }
+          {!this.state.showIntroText && <Button style={styles.infoText} onPress={() => this.setState({showIntroText: !this.state.showIntroText})} title='Back to app'/> }
+          {!this.state.showIntroText &&  <Text> hi </Text> }
         </View>
       );
     }
@@ -159,8 +165,17 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 25,
     backgroundColor: '#f2af58',
-    paddingBottom: 100,
+    paddingBottom: 20,
     fontFamily: 'Avenir',
+  },
+  infoText: {
+    color: 'white',
+    fontSize: 15,
+    fontFamily: 'Avenir',
+    borderColor: 'white',
+    borderWidth: 1,
+    borderRadius: 10,
+    padding: 6,
   },
   button: {
     alignItems: 'center',
