@@ -23,7 +23,7 @@ import { RNCamera } from 'react-native-camera';
 //import CameraKitCameraScreen we are going to use.
  
 export default class App extends React.Component {
-  state = { isPermitted: false };
+    state = { isPermitted: false, res: {} };
   constructor(props) {
     super(props);
   }
@@ -145,11 +145,13 @@ export default class App extends React.Component {
                                      'returnFaceAttributes': '{string}'
                                      }
          }).then(response => {
+//                 console.log(JSON.stringify(response.status));
                  console.log(response.status);
+
                  return response.json();
          });
-          
-          console.log(result);
+          this.setState({ res: result[0].faceAttributes.emotion });
+          console.log(result[0].faceAttributes.emotion);
       } catch(ex){
           console.error(ex);
           Alert.alert(event.type, ex.message);
@@ -167,9 +169,10 @@ export default class App extends React.Component {
                   }}
                   captureAudio={false}
                   style={cameraStyles.preview}
-                  type={RNCamera.Constants.Type.back}
-                  flashMode={RNCamera.Constants.FlashMode.on}
+                  type={RNCamera.Constants.Type.front}
+                  flashMode={RNCamera.Constants.FlashMode.auto}
                 />
+              <Text style={styles.temp}>{this.state.res.anger}</Text>
                 <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center', backgroundColor: 'white' }}>
                   <TouchableOpacity onPress={this.takePicture.bind(this)} style={cameraStyles.capture}>
                     <Text style={{ fontSize: 14 }}> SNAP </Text>
@@ -221,6 +224,13 @@ const styles = StyleSheet.create({
     width: 300,
     marginTop: 16,
   },
+  temp: {
+  padding: 30,
+  backgroundColor: 'red',
+  color: 'blue',
+  fontSize: 20,
+  },
+
 });
 
 const cameraStyles = StyleSheet.create({
