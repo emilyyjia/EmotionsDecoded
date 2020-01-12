@@ -10,10 +10,12 @@ import {
   PermissionsAndroid,
   Platform,
   TouchableOpacity,
+  Image,
 } from 'react-native';
 //import all the basic components we are going to use.
 import { CameraKitCameraScreen } from 'react-native-camera-kit';
 //import CameraKitCameraScreen we are going to use.
+import { logo } from './ios/logo.png';
  
 export default class App extends React.Component {
   state = { isPermitted: false };
@@ -127,10 +129,13 @@ export default class App extends React.Component {
     } else {
       return (
         <View style={styles.container}>
+          <Text style={styles.text2}>Welcome to Emotions Decoded!</Text>
+          <Image style={{width: 250, height: 250, backgroundColor: 'red'}} source={ logo } />
+
           <TouchableOpacity
             style={styles.button}
             onPress={this.onPress.bind(this)}>
-            <Text>Open Camera</Text>
+            <Text style={styles.text}>Capture Face</Text>
           </TouchableOpacity>
         </View>
       );
@@ -142,13 +147,28 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'white',
+    backgroundColor: '#f2af58',
+  },
+  text: {
+    color: 'white',
+    fontSize: 32,
+    backgroundColor: '#f2af58',
+    fontFamily: 'Avenir',
+  },
+  text2: {
+    color: 'white',
+    fontSize: 25,
+    backgroundColor: '#f2af58',
+    paddingBottom: 100,
+    fontFamily: 'Avenir',
   },
   button: {
     alignItems: 'center',
-    backgroundColor: '#DDDDDD',
+    borderColor: 'white',
+    borderWidth: 3,
+    borderRadius: 20,
     padding: 10,
-    width: 300,
+    width: 250,
     marginTop: 16,
   },
 });
