@@ -1,114 +1,154 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow
- */
-
+//This is an example code for the camera//
 import React from 'react';
+//import react in our code.
 import {
-  SafeAreaView,
   StyleSheet,
-  ScrollView,
-  View,
   Text,
-  StatusBar,
+  View,
+  Alert,
+  ActivityIndicator,
+  PermissionsAndroid,
+  Platform,
+  TouchableOpacity,
 } from 'react-native';
-
-import {
-  Header,
-  LearnMoreLinks,
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
-const App: () => React$Node = () => {
-  return (
-    <>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={styles.scrollView}>
-          <Header />
-          {global.HermesInternal == null ? null : (
-            <View style={styles.engine}>
-              <Text style={styles.footer}>Engine: Hermes</Text>
-            </View>
-          )}
-          <View style={styles.body}>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Step One</Text>
-              <Text style={styles.sectionDescription}>
-                Edit <Text style={styles.highlight}>App.js</Text> to change this
-                screen and then come back to see your edits.
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>See Your Changes</Text>
-              <Text style={styles.sectionDescription}>
-                <ReloadInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Debug</Text>
-              <Text style={styles.sectionDescription}>
-                <DebugInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Learn More</Text>
-              <Text style={styles.sectionDescription}>
-                Read the docs to discover what to do next:
-              </Text>
-            </View>
-            <LearnMoreLinks />
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    </>
-  );
-};
-
+//import all the basic components we are going to use.
+import { CameraKitCameraScreen } from 'react-native-camera-kit';
+//import CameraKitCameraScreen we are going to use.
+ 
+export default class App extends React.Component {
+  state = { isPermitted: false };
+  constructor(props) {
+    super(props);
+  }
+  onPress() {
+    var that = this;
+    if (Platform.OS === 'android') {
+      async function requestCameraPermission() {
+        try {
+          const granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.CAMERA,
+            {
+              title: 'CameraExample App Camera Permission',
+              message: 'CameraExample App needs access to your camera ',
+            }
+          );
+          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+            //If CAMERA Permission is granted
+            //Calling the WRITE_EXTERNAL_STORAGE permission function
+            requestExternalWritePermission();
+          } else {
+            alert('CAMERA permission denied');
+          }
+        } catch (err) {
+          alert('Camera permission err', err);
+          console.warn(err);
+        }
+      }
+      async function requestExternalWritePermission() {
+        try {
+          const granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+            {
+              title: 'CameraExample App External Storage Write Permission',
+              message:
+                'CameraExample App needs access to Storage data in your SD Card ',
+            }
+          );
+          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+            //If WRITE_EXTERNAL_STORAGE Permission is granted
+            //Calling the READ_EXTERNAL_STORAGE permission function
+            requestExternalReadPermission();
+          } else {
+            alert('WRITE_EXTERNAL_STORAGE permission denied');
+          }
+        } catch (err) {
+          alert('Write permission err', err);
+          console.warn(err);
+        }
+      }
+      async function requestExternalReadPermission() {
+        try {
+          const granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+            {
+              title: 'CameraExample App Read Storage Read Permission',
+              message: 'CameraExample App needs access to your SD Card ',
+            }
+          );
+          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+            //If READ_EXTERNAL_STORAGE Permission is granted
+            //changing the state to re-render and open the camera
+            //in place of activity indicator
+            that.setState({ isPermitted: true });
+          } else {
+            alert('READ_EXTERNAL_STORAGE permission denied');
+          }
+        } catch (err) {
+          alert('Read permission err', err);
+          console.warn(err);
+        }
+      }
+      //Calling the camera permission function
+      requestCameraPermission();
+    } else {
+      this.setState({ isPermitted: true });
+    }
+  }
+  onBottomButtonPressed(event) {
+    const captureImages = JSON.stringify(event.captureImages);
+    if (event.type === 'left') {
+      this.setState({ isPermitted: false });
+    } else {
+      Alert.alert(
+        event.type,
+        captureImages,
+        [{ text: 'OK', onPress: () => console.log('OK Pressed') }],
+        { cancelable: false }
+      );
+    }
+  }
+  render() {
+    if (this.state.isPermitted) {
+      return (
+        <CameraKitCameraScreen
+          // Buttons to perform action done and cancel
+          actions={{ rightButtonText: 'Done', leftButtonText: 'Cancel' }}
+          onBottomButtonPressed={event => this.onBottomButtonPressed(event)}
+          flashImages={{
+            // Flash button images
+            on: require('./assets/flashon.png'),
+            off: require('./assets/flashoff.png'),
+            auto: require('./assets/flashauto.png'),
+          }}
+          cameraFlipImage={require('./assets/flip.png')}
+          captureButtonImage={require('./assets/capture.png')}
+        />
+      );
+    } else {
+      return (
+        <View style={styles.container}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={this.onPress.bind(this)}>
+            <Text>Open Camera</Text>
+          </TouchableOpacity>
+        </View>
+      );
+    }
+  }
+}
 const styles = StyleSheet.create({
-  scrollView: {
-    backgroundColor: Colors.lighter,
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'white',
   },
-  engine: {
-    position: 'absolute',
-    right: 0,
-  },
-  body: {
-    backgroundColor: Colors.orange,
-  },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: Colors.black,
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-    color: Colors.dark,
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-  footer: {
-    color: Colors.dark,
-    fontSize: 12,
-    fontWeight: '600',
-    padding: 4,
-    paddingRight: 12,
-    textAlign: 'right',
+  button: {
+    alignItems: 'center',
+    backgroundColor: '#DDDDDD',
+    padding: 10,
+    width: 300,
+    marginTop: 16,
   },
 });
-
-export default App;
