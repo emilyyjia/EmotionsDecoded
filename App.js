@@ -1,5 +1,11 @@
 //This is an example code for the camera//
 import React from 'react';
+//import base64 from 'react-native-base64';
+import { Buffer } from 'buffer';
+
+const API_URL = 'https://westcentralus.api.cognitive.microsoft.com/face/v1.0/detect?returnFaceAttributes=emotion';
+const API_KEY = '';
+
 //import react in our code.
 import {
   StyleSheet,
@@ -15,12 +21,13 @@ import {
 } from 'react-native';
 import { Icon } from 'react-native-elements';
 //import all the basic components we are going to use.
-import { CameraKitCameraScreen } from 'react-native-camera-kit';
+//import { CameraKitCameraScreen } from 'react-native-camera-kit';
+import { RNCamera } from 'react-native-camera';
 //import CameraKitCameraScreen we are going to use.
 import { logo } from './ios/logo.png';
 
 export default class App extends React.Component {
-  state = { isPermitted: false, showIntroText: true };
+    state = { isPermitted: false, res: {}, showIntroText: true };
   constructor(props) {
     super(props);
   }
@@ -98,35 +105,101 @@ export default class App extends React.Component {
       this.setState({ isPermitted: true });
     }
   }
-  onBottomButtonPressed(event) {
-    const captureImages = JSON.stringify(event.captureImages);
-    if (event.type === 'left') {
-      this.setState({ isPermitted: false });
-    } else {
-      Alert.alert(
-        event.type,
-        captureImages,
-        [{ text: 'OK', onPress: () => console.log('OK Pressed') }],
-        { cancelable: false }
-      );
-    }
+//  onBottomButtonPressed(event) {
+//      console.log('Here', event);
+//    const captureImages = JSON.stringify(event.captureImages);
+//    if (event.type === 'left') {
+//      this.setState({ isPermitted: false });
+//    } else {
+//      console.log('here');
+//      Alert.alert(
+//        event.type,
+//        captureImages,
+//        [{ text: 'OK', onPress: () => console.log('OK Pressed') }],
+//        { cancelable: false }
+//      );
+//    }
+//  }
+    
+  async takePicture(event) {
+      event.persist();
+      if(!this.camera) {
+          Alert.alert(event.type, "No camera",        [{ text: 'OK', onPress: () => console.log('OK Pressed') }],
+          { cancelable: false });
+          return;
+      }
+      
+      try {
+            
+          const options = { quality: 0.5, base64: true, doNotSave: true };
+          const data = await this.camera.takePictureAsync(options);
+          
+          const buffer = Buffer.from(data.base64, 'base64');
+
+          const result = await fetch(API_URL, {
+            method: 'POST',
+            headers: {
+              'Ocp-Apim-Subscription-Key': API_KEY,
+              'Content-Type': 'application/octet-stream'
+            },
+            body: buffer,
+                                     params: {
+                                     'returnFaceId': 'false',
+                                     'returnFaceLandmarks': 'false',
+                                     'returnFaceAttributes': '{string}'
+                                     }
+         }).then(response => {
+//                 console.log(JSON.stringify(response.status));
+                 console.log(response.status);
+
+                 return response.json();
+         });
+          this.setState({ res: result[0].faceAttributes.emotion });
+          console.log(result[0].faceAttributes.emotion);
+      } catch(ex){
+          console.error(ex);
+          Alert.alert(event.type, ex.message);
+      }
+      
   }
+    
   render() {
     if (this.state.isPermitted) {
       return (
-        <CameraKitCameraScreen
-          // Buttons to perform action done and cancel
-          actions={{ rightButtonText: 'Done', leftButtonText: 'Cancel' }}
-          onBottomButtonPressed={event => this.onBottomButtonPressed(event)}
-          flashImages={{
-            // Flash button images
-            on: require('./assets/flashon.png'),
-            off: require('./assets/flashoff.png'),
-            auto: require('./assets/flashauto.png'),
-          }}
-          cameraFlipImage={require('./assets/flip.png')}
-          captureButtonImage={require('./assets/capture.png')}
-        />
+              <View style={cameraStyles.container}>
+                <RNCamera
+                  ref={ref => {
+                    this.camera = ref;
+                  }}
+                  captureAudio={false}
+                  style={cameraStyles.preview}
+                  type={RNCamera.Constants.Type.front}
+                  flashMode={RNCamera.Constants.FlashMode.auto}
+                />
+              <Text style={styles.temp}>{this.state.res.anger}</Text>
+                <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center', backgroundColor: 'white' }}>
+                  <TouchableOpacity onPress={this.takePicture.bind(this)} style={cameraStyles.capture}>
+                    <Text style={{ fontSize: 14 }}> SNAP </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+//        <CameraKitCameraScreen
+//              style={{
+//                flex: 1,
+//                backgroundColor: 'blue'
+//              }}
+//          // Buttons to perform action done and cancel
+//          actions={{ rightButtonText: 'Done', leftButtonText: 'Cancel' }}
+//          onBottomButtonPressed={event => this.onBottomButtonPressed(event)}
+//          flashImages={{
+//            // Flash button images
+//            on: require('./assets/flashon.png'),
+//            off: require('./assets/flashoff.png'),
+//            auto: require('./assets/flashauto.png'),
+//          }}
+//          cameraFlipImage={require('./assets/flip.png')}
+//          captureButtonImage={require('./assets/capture.png')}
+//        />
       );
     } else {
       return (
@@ -185,5 +258,34 @@ const styles = StyleSheet.create({
     padding: 10,
     width: 250,
     marginTop: 16,
+  },
+  temp: {
+  padding: 30,
+  backgroundColor: 'red',
+  color: 'blue',
+  fontSize: 20,
+  },
+
+});
+
+const cameraStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: 'column',
+    backgroundColor: 'blue',
+  },
+  preview: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  capture: {
+    flex: 0,
+    backgroundColor: '#fff',
+    borderRadius: 5,
+    padding: 15,
+    paddingHorizontal: 20,
+    alignSelf: 'center',
+    margin: 20,
   },
 });
