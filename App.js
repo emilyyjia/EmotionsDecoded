@@ -27,7 +27,7 @@ import { RNCamera } from 'react-native-camera';
 import { logo } from './ios/logo.png';
 
 export default class App extends React.Component {
-    state = { isPermitted: false, res: {}, showIntroText: true };
+    state = { isPermitted: false, res: {}, showIntroText: true, tookPic: false };
   constructor(props) {
     super(props);
   }
@@ -105,21 +105,6 @@ export default class App extends React.Component {
       this.setState({ isPermitted: true });
     }
   }
-//  onBottomButtonPressed(event) {
-//      console.log('Here', event);
-//    const captureImages = JSON.stringify(event.captureImages);
-//    if (event.type === 'left') {
-//      this.setState({ isPermitted: false });
-//    } else {
-//      console.log('here');
-//      Alert.alert(
-//        event.type,
-//        captureImages,
-//        [{ text: 'OK', onPress: () => console.log('OK Pressed') }],
-//        { cancelable: false }
-//      );
-//    }
-//  }
     
   async takePicture(event) {
       event.persist();
@@ -147,7 +132,8 @@ export default class App extends React.Component {
             console.log(response.status);
             return response.json();
          });
-          this.setState({ res: result[0].faceAttributes.emotion });
+          result && result[0] && this.setState({ res: result[0].faceAttributes.emotion });
+          this.setState( { tookPic: true });
           console.log(result && result[0] && result[0].faceAttributes.emotion);
       } catch(ex){
           console.error(ex);
@@ -176,25 +162,8 @@ export default class App extends React.Component {
                   </TouchableOpacity>
                 </View>
               </View>
-//        <CameraKitCameraScreen
-//              style={{
-//                flex: 1,
-//                backgroundColor: 'blue'
-//              }}
-//          // Buttons to perform action done and cancel
-//          actions={{ rightButtonText: 'Done', leftButtonText: 'Cancel' }}
-//          onBottomButtonPressed={event => this.onBottomButtonPressed(event)}
-//          flashImages={{
-//            // Flash button images
-//            on: require('./assets/flashon.png'),
-//            off: require('./assets/flashoff.png'),
-//            auto: require('./assets/flashauto.png'),
-//          }}
-//          cameraFlipImage={require('./assets/flip.png')}
-//          captureButtonImage={require('./assets/capture.png')}
-//        />
       );
-    } else {
+    } else if (!this.state.tookPic) {
       return (
         <View style={styles.container}>
           {this.state.showIntroText && <Text style={styles.text2}>Welcome to Emotions Decoded!</Text>}
@@ -211,6 +180,8 @@ export default class App extends React.Component {
           {!this.state.showIntroText &&  <Text> hi </Text> }
         </View>
       );
+    } else {
+      <Text> hi </Text>
     }
   }
 }
