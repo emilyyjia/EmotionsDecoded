@@ -142,20 +142,13 @@ export default class App extends React.Component {
               'Ocp-Apim-Subscription-Key': API_KEY,
               'Content-Type': 'application/octet-stream'
             },
-            body: buffer,
-                                     params: {
-                                     'returnFaceId': 'false',
-                                     'returnFaceLandmarks': 'false',
-                                     'returnFaceAttributes': '{string}'
-                                     }
+            body: buffer
          }).then(response => {
-//                 console.log(JSON.stringify(response.status));
-                 console.log(response.status);
-
-                 return response.json();
+            console.log(response.status);
+            return response.json();
          });
           this.setState({ res: result[0].faceAttributes.emotion });
-          console.log(result[0].faceAttributes.emotion);
+          console.log(result && result[0] && result[0].faceAttributes.emotion);
       } catch(ex){
           console.error(ex);
           Alert.alert(event.type, ex.message);
@@ -207,7 +200,7 @@ export default class App extends React.Component {
           {this.state.showIntroText && <Text style={styles.text2}>Welcome to Emotions Decoded!</Text>}
           {this.state.showIntroText && <Icon name='help' /> }
           {this.state.showIntroText && <Button style={styles.infoText} onPress={() => this.setState({showIntroText: !this.state.showIntroText})} title='Learn more about the app'/> }
-          {this.state.showIntroText && <Image style={{width: 250, height: 250, backgroundColor: 'red'}} source={ logo } /> }
+          {this.state.showIntroText && <Image style={{width: 250, height: 250 }} source={ logo } /> }
           {this.state.showIntroText && <TouchableOpacity
             style={styles.button}
             onPress={this.onPress.bind(this)}>
