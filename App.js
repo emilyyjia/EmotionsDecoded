@@ -4,7 +4,7 @@ import React from 'react';
 import { Buffer } from 'buffer';
 
 const API_URL = 'https://westcentralus.api.cognitive.microsoft.com/face/v1.0/detect?returnFaceAttributes=emotion';
-const API_KEY = '172668a7e96a495ab1f38ca5c57bceb4';
+const API_KEY = '';
 
 //import react in our code.
 import {
