@@ -24,7 +24,7 @@ import { Icon } from 'react-native-elements';
 //import { CameraKitCameraScreen } from 'react-native-camera-kit';
 import { RNCamera } from 'react-native-camera';
 //import CameraKitCameraScreen we are going to use.
-import { logo } from './ios/logo.png';
+const logo = require('./ios/logo.png');
 
 export default class App extends React.Component {
     state = { isPermitted: false, res: {}, showIntroText: true, tookPic: false };
@@ -134,6 +134,7 @@ export default class App extends React.Component {
          });
           result && result[0] && this.setState({ res: result[0].faceAttributes.emotion });
           this.setState( { tookPic: true });
+          console.log(this.state.tookPic);
           console.log(result && result[0] && result[0].faceAttributes.emotion);
       } catch(ex){
           console.error(ex);
@@ -143,7 +144,27 @@ export default class App extends React.Component {
   }
     
   render() {
-    if (this.state.isPermitted) {
+    if (this.state.tookPic) {
+        return (
+                <View style={styles.container}>
+              <View style={{height: 50, width: '100%', flexDirection: 'row'}}>
+                <Button style={styles.homeButton} onPress={() => this.setState({tookPic: false, isPermitted: false})} title='Home'/>
+              </View>
+              
+              <View style={{width: '100%', alignItems: 'center' }}>
+                  <Text style={styles.temp}>Anger: {this.state.res.anger}</Text>
+                  <Text style={styles.temp}>Contempt: {this.state.res.contempt}</Text>
+                  <Text style={styles.temp}>Disgust: {this.state.res.disgust}</Text>
+                  <Text style={styles.temp}>Fear: {this.state.res.fear}</Text>
+                  <Text style={styles.temp}>Happiness: {this.state.res.happiness}</Text>
+                  <Text style={styles.temp}>Neutral: {this.state.res.neutral}</Text>
+                  <Text style={styles.temp}>Sadness: {this.state.res.sadness}</Text>
+                  <Text style={styles.temp}>Surprise: {this.state.res.surprise}</Text>
+              </View>
+              
+              </View>
+              );
+    } else if (this.state.isPermitted) {
       return (
               <View style={cameraStyles.container}>
                 <RNCamera
@@ -153,12 +174,12 @@ export default class App extends React.Component {
                   captureAudio={false}
                   style={cameraStyles.preview}
                   type={RNCamera.Constants.Type.front}
-                  flashMode={RNCamera.Constants.FlashMode.auto}
+                  flashMode={RNCamera.Constants.FlashMode.on}
                 />
               <Text style={styles.temp}>{this.state.res.anger}</Text>
                 <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center', backgroundColor: 'white' }}>
                   <TouchableOpacity onPress={this.takePicture.bind(this)} style={cameraStyles.capture}>
-                    <Text style={{ fontSize: 14 }}> SNAP </Text>
+                    <Text style={styles.snapButton}> SNAP </Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -167,9 +188,19 @@ export default class App extends React.Component {
       return (
         <View style={styles.container}>
           {this.state.showIntroText && <Text style={styles.text2}>Welcome to Emotions Decoded!</Text>}
-          {this.state.showIntroText && <Icon name='help' /> }
-          {this.state.showIntroText && <Button style={styles.infoText} onPress={() => this.setState({showIntroText: !this.state.showIntroText})} title='Learn more about the app'/> }
-          {this.state.showIntroText && <Image style={{width: 250, height: 250 }} source={ logo } /> }
+              
+          <View style={styles.subtitleContainer}>
+              {this.state.showIntroText &&
+                <TouchableOpacity
+                    style={styles.infoTextButton}
+                    onPress={() => this.setState({showIntroText: !this.state.showIntroText})}>
+                    {this.state.showIntroText && <Icon name='help' /> }
+                    <Text style={styles.infoText}> Learn more about the app </Text>
+                </TouchableOpacity>
+              }
+          </View>
+              
+          {this.state.showIntroText && <Image style={{width: 350, height: 350 }} source={ logo } /> }
           {this.state.showIntroText && <TouchableOpacity
             style={styles.button}
             onPress={this.onPress.bind(this)}>
@@ -180,8 +211,6 @@ export default class App extends React.Component {
           {!this.state.showIntroText &&  <Text> hi </Text> }
         </View>
       );
-    } else {
-      <Text> hi </Text>
     }
   }
 }
@@ -191,6 +220,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#f2af58',
+  },
+  subtitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   text: {
     color: 'white',
@@ -205,15 +238,19 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     fontFamily: 'Avenir',
   },
-  infoText: {
-    color: 'white',
+  infoTextButton: {
     fontSize: 15,
     fontFamily: 'Avenir',
     borderColor: 'white',
     borderWidth: 1,
     borderRadius: 10,
     padding: 6,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
+ infoText: {
+   color: 'white',
+ },
   button: {
     alignItems: 'center',
     borderColor: 'white',
@@ -224,19 +261,24 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   temp: {
-  padding: 30,
-  backgroundColor: 'red',
-  color: 'blue',
-  fontSize: 20,
+      padding: 30,
+      color: 'white',
+      fontSize: 20,
   },
-
+  homeButton: {
+    color: 'red',
+  },
+  snapButton: {
+    fontSize: 50,
+    borderRadius: 30,
+    borderColor: 'black',
+    borderWidth: 4,
+ },
 });
 
 const cameraStyles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: 'column',
-    backgroundColor: 'blue',
   },
   preview: {
     flex: 1,
@@ -246,10 +288,10 @@ const cameraStyles = StyleSheet.create({
   capture: {
     flex: 0,
     backgroundColor: '#fff',
-    borderRadius: 5,
-    padding: 15,
+//    borderRadius: 5,
+    paddingBottom: 65,
     paddingHorizontal: 20,
     alignSelf: 'center',
-    margin: 20,
+//    margin: 20,
   },
 });
