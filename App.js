@@ -16,14 +16,18 @@ import {
   PermissionsAndroid,
   Platform,
   TouchableOpacity,
+  Image,
+  Button,
 } from 'react-native';
+import { Icon } from 'react-native-elements';
 //import all the basic components we are going to use.
 //import { CameraKitCameraScreen } from 'react-native-camera-kit';
 import { RNCamera } from 'react-native-camera';
 //import CameraKitCameraScreen we are going to use.
- 
+import { logo } from './ios/logo.png';
+
 export default class App extends React.Component {
-    state = { isPermitted: false, res: {} };
+    state = { isPermitted: false, res: {}, showIntroText: true };
   constructor(props) {
     super(props);
   }
@@ -200,11 +204,18 @@ export default class App extends React.Component {
     } else {
       return (
         <View style={styles.container}>
-          <TouchableOpacity
+          {this.state.showIntroText && <Text style={styles.text2}>Welcome to Emotions Decoded!</Text>}
+          {this.state.showIntroText && <Icon name='help' /> }
+          {this.state.showIntroText && <Button style={styles.infoText} onPress={() => this.setState({showIntroText: !this.state.showIntroText})} title='Learn more about the app'/> }
+          {this.state.showIntroText && <Image style={{width: 250, height: 250, backgroundColor: 'red'}} source={ logo } /> }
+          {this.state.showIntroText && <TouchableOpacity
             style={styles.button}
             onPress={this.onPress.bind(this)}>
-            <Text>Open Camera</Text>
-          </TouchableOpacity>
+            <Text style={styles.text}>Capture Face</Text>
+          </TouchableOpacity> }
+          {!this.state.showIntroText && <Icon name='close' /> }
+          {!this.state.showIntroText && <Button style={styles.infoText} onPress={() => this.setState({showIntroText: !this.state.showIntroText})} title='Back to app'/> }
+          {!this.state.showIntroText &&  <Text> hi </Text> }
         </View>
       );
     }
@@ -215,13 +226,37 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'white',
+    backgroundColor: '#f2af58',
+  },
+  text: {
+    color: 'white',
+    fontSize: 32,
+    backgroundColor: '#f2af58',
+    fontFamily: 'Avenir',
+  },
+  text2: {
+    color: 'white',
+    fontSize: 25,
+    backgroundColor: '#f2af58',
+    paddingBottom: 20,
+    fontFamily: 'Avenir',
+  },
+  infoText: {
+    color: 'white',
+    fontSize: 15,
+    fontFamily: 'Avenir',
+    borderColor: 'white',
+    borderWidth: 1,
+    borderRadius: 10,
+    padding: 6,
   },
   button: {
     alignItems: 'center',
-    backgroundColor: '#DDDDDD',
+    borderColor: 'white',
+    borderWidth: 3,
+    borderRadius: 20,
     padding: 10,
-    width: 300,
+    width: 250,
     marginTop: 16,
   },
   temp: {
