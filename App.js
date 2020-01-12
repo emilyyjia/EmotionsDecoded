@@ -227,9 +227,22 @@ export default class App extends React.Component {
             onPress={this.onPress.bind(this)}>
             <Text style={styles.text}>Capture Face</Text>
           </TouchableOpacity> }
-          {!this.state.showIntroText && <Icon name='close' /> }
-          {!this.state.showIntroText && <Button style={styles.infoText} onPress={() => this.setState({showIntroText: !this.state.showIntroText})} title='Back to app'/> }
-          {!this.state.showIntroText &&  <Text> hi </Text> }
+          {!this.state.showIntroText && <TouchableOpacity
+            // style={styles.backButton}
+            onPress={() => this.setState({showIntroText: !this.state.showIntroText, isPermitted: false})}>
+            {!this.state.showIntroText && <Icon style={{ color: 'white' }} name='undo' /> }
+            <View style={{height: 50, width: '100%', flexDirection: 'row'}}>
+            <Text style={styles.backButtonText}>Back</Text>
+            </View>
+          </TouchableOpacity> }
+          {!this.state.showIntroText &&  <Text style={styles.helpText}>Welcome! I'm Ed and I will be helping you detect emotions on faces! </Text> }
+          {!this.state.showIntroText &&  <Text style={styles.helpText}>  </Text> }
+          {!this.state.showIntroText &&  <Text style={styles.helpText}> Step 1: Click 'Capture Face' </Text> }
+          {!this.state.showIntroText &&  <Text style={styles.helpText}> Step 2: Take Snap! </Text> }
+          {!this.state.showIntroText &&  <Text style={styles.helpText}> Step 3: View Results </Text> }
+          {!this.state.showIntroText &&  <Text style={styles.helpText}> </Text> }
+          {!this.state.showIntroText &&  <Text style={styles.helpText}>You will see a list of emotions and their likelihood. The highest one is the emotion the person is most likely experiencing! </Text> }
+
         </View>
       );
     }
@@ -251,6 +264,15 @@ const styles = StyleSheet.create({
     fontSize: 32,
     backgroundColor: '#f2af58',
     fontFamily: 'Avenir',
+  },
+  iconStyle: {
+    color: 'white',
+  },
+  backButtonText: {
+    color: 'black',
+    fontSize: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   text2: {
     color: 'white',
@@ -281,6 +303,14 @@ const styles = StyleSheet.create({
     width: 250,
     marginTop: 16,
   },
+  backButton: {
+    alignItems: 'center',
+    borderColor: 'white',
+    borderWidth: 2,
+    borderRadius: 20,
+    padding: 10,
+    flexDirection: 'row',
+  },
   temp: {
       padding: 30,
       color: 'white',
@@ -299,6 +329,12 @@ const styles = StyleSheet.create({
     borderColor: 'black',
     borderWidth: 4,
  },
+ helpText: {
+   color: 'white',
+   fontSize: 30, 
+   fontFamily: 'Avenir',
+   padding: 10,
+ }
 });
 
 const cameraStyles = StyleSheet.create({
