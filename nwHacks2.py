@@ -4,11 +4,11 @@ import csv
 #import speech 
 
 # set to your own subscription key value
-subscription_key = '172668a7e96a495ab1f38ca5c57bceb4'
+subscription_key = ''
 assert subscription_key
 
 # replace <My Endpoint String> with the string from your endpoint URL
-face_api_url = ' https://westcentralus.api.cognitive.microsoft.com/face/v1.0/detect'
+face_api_url = ''
 
 image_url = 'https://images.unsplash.com/photo-1493106819501-66d381c466f1?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=934&q=80'
 
