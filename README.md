@@ -24,3 +24,27 @@ We learned that you don't need to be an expert in AI or Machine Learning in orde
 
 ## What's next for Emotions Decoded
 We will be publishing the application to the App Store, and we want to also release an Android version of the app. We also want to extend the functionality. For instance, using AI or Machine Learning to suggest an appropriate next action after detecting the emotion.
+
+# How to install, build and run
+
+You must be running MacOS (I'm sorry Windows users)
+1. Clone the repo
+2. If XCode isn't installed, I'm sorry but right now you have to install it.
+3. Install node, watchman and cocoapods: 
+On terminal:
+```
+brew install node
+brew install watchman
+sudo gem install cocoapods
+```
+4. On terminal inside the project file run:
+```
+npm install
+cd ios
+pod install
+cd ..
+```
+5. Navigate to EmotionsDecoded.xcworkspace and open it with XCode.
+6. Plug an iOS device into your computer and run it there through XCode. (this may require addtional configuration)
+  Unfourtunately we can't use the simulator because we need the camera.
+7. Snap away!
