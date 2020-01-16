@@ -1,5 +1,7 @@
 # EmotionsDecoded
 
+An iOS application that analyzes a face and outputs the most likely emotion.
+
 ## Inspiration
 The estimated rate of Autism Spectrum Disorder among 5-17 year olds in Canada is 1 in 66. One challenge individuals on the Autism Spectrum face is difficulty detecting emotions on peoples faces. We wanted to build a learning tool that will aid in mapping faces to emotions, in real-time and leveraging intelligent facial recognition technology.
 
